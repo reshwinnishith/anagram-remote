@@ -122,4 +122,38 @@ w(f"\t}};\n\trootObject = {PROJ};\n}}")
 
 os.makedirs("AnagramRemote.xcodeproj", exist_ok=True)
 open("AnagramRemote.xcodeproj/project.pbxproj", "w").write("\n".join(out) + "\n")
-print("wrote project.pbxproj")
+
+def ref(tid, prod, name, extra=""):
+    return (f'<BuildableReference BuildableIdentifier = "primary" BlueprintIdentifier = "{tid}" '
+            f'BuildableName = "{prod}" BlueprintName = "{name}" ReferencedContainer = "container:AnagramRemote.xcodeproj">'
+            f'</BuildableReference>')
+scheme = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Scheme LastUpgradeVersion = "1500" version = "1.7">
+   <BuildAction parallelizeBuildables = "YES" buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry buildForTesting = "YES" buildForRunning = "YES" buildForProfiling = "YES" buildForArchiving = "YES" buildForAnalyzing = "YES">
+            {ref(APPT, "AnagramRemote.app", "AnagramRemote")}
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference skipped = "NO">
+            {ref(TESTT, "AnagramRemoteTests.xctest", "AnagramRemoteTests")}
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction buildConfiguration = "Debug" selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB" launchStyle = "0" useCustomWorkingDirectory = "NO" ignoresPersistentStateOnLaunch = "NO" debugDocumentVersioning = "YES" allowLocationSimulation = "YES">
+      <BuildableProductRunnable runnableDebuggingMode = "0">
+         {ref(APPT, "AnagramRemote.app", "AnagramRemote")}
+      </BuildableProductRunnable>
+   </LaunchAction>
+   <ProfileAction buildConfiguration = "Release" shouldUseLaunchSchemeArgsEnv = "YES" savedToolIdentifier = "" useCustomWorkingDirectory = "NO" debugDocumentVersioning = "YES">
+   </ProfileAction>
+   <AnalyzeAction buildConfiguration = "Debug"></AnalyzeAction>
+   <ArchiveAction buildConfiguration = "Release" revealArchiveInOrganizer = "YES"></ArchiveAction>
+</Scheme>
+"""
+os.makedirs("AnagramRemote.xcodeproj/xcshareddata/xcschemes", exist_ok=True)
+open("AnagramRemote.xcodeproj/xcshareddata/xcschemes/AnagramRemote.xcscheme", "w").write(scheme)
+print("wrote project.pbxproj and shared scheme")

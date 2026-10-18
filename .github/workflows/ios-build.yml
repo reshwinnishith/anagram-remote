@@ -1,0 +1,118 @@
+name: iOS build and test
+
+# Unsigned builds only. No Apple credentials, certificates or provisioning profiles are used or needed.
+on:
+  push:
+    branches: ["claude/**", main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT: AnagramRemote.xcodeproj
+  SCHEME: AnagramRemote
+
+jobs:
+  simulator-build-and-test:
+    name: Simulator build + tests (iPad)
+    runs-on: macos-15   # standard (non-larger) hosted runner
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain info
+        run: |
+          xcodebuild -version
+          swift --version
+          xcodebuild -list -project "$PROJECT" | tee toolchain-list.txt
+
+      - name: Verify generated project is up to date
+        run: |
+          python3 Tools/generate_xcodeproj.py
+          git diff --exit-code -- AnagramRemote.xcodeproj
+
+      - name: Pick an iPad simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json,sys
+          d=json.load(sys.stdin)["devices"]
+          c=[(k,x) for k,v in d.items() if "iOS" in k for x in v if "iPad" in x["name"]]
+          c.sort(key=lambda t:t[0])
+          print(c[-1][1]["udid"] if c else "")')
+          [ -n "$UDID" ] || { echo "No iPad simulator available"; xcrun simctl list devices available; exit 1; }
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl list devices available | grep "$UDID"
+
+      - name: Build for iOS Simulator (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild build -project "$PROJECT" -scheme "$SCHEME" \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tee simulator-build.log
+
+      - name: Run unit tests on iPad simulator
+        run: |
+          set -o pipefail
+          xcodebuild test -project "$PROJECT" -scheme "$SCHEME" \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tee simulator-test.log
+
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            echo "### Simulator job"
+            echo '```'
+            grep -hE "error:|warning: .*Swift|Test Suite .* (passed|failed)|Executed [0-9]+ tests|\*\* (BUILD|TEST) " simulator-*.log | head -80 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-logs
+          path: |
+            simulator-*.log
+            toolchain-list.txt
+            TestResults.xcresult
+          if-no-files-found: warn
+
+  device-build-unsigned:
+    name: Unsigned iOS device build (compile check only)
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build for generic iOS device (unsigned, not installable)
+        run: |
+          set -o pipefail
+          xcodebuild build -project "$PROJECT" -scheme "$SCHEME" \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tee device-build.log
+
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            echo "### Device job"
+            echo '```'
+            grep -hE "error:|\*\* BUILD " device-build.log | head -60 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-build-log
+          path: device-build.log
+          if-no-files-found: warn
