@@ -87,4 +87,29 @@ final class MIDIConnectionManagerTests: XCTestCase {
         m.refresh(); m.refresh()
         XCTAssertEqual(t.sent.count, 1)
     }
+
+    func testTransportFailureRecordsErrorAndNoTransmission() {
+        let t = MockMIDITransport(destinations: [anagram])
+        let m = MIDIConnectionManager(transport: t)
+        m.selectDestination(id: 42)
+        t.sendError = MIDITransportError.sendFailed(-1)
+        XCTAssertFalse(m.sendProgramChange(program: 1))
+        XCTAssertNil(m.lastTransmission)
+        XCTAssertEqual(m.lastError, MIDITransportError.sendFailed(-1).localizedDescription)
+    }
+
+    func testSelectingUnknownDestinationClearsSelection() {
+        let t = MockMIDITransport(destinations: [anagram])
+        let m = MIDIConnectionManager(transport: t)
+        m.selectDestination(id: 42)
+        m.selectDestination(id: 999)
+        XCTAssertEqual(m.state, .noDestinationSelected)
+        XCTAssertFalse(m.canSend)
+    }
+
+    /// Tripwire: the one-based→wire mapping is PROVISIONAL until verified on a real Anagram.
+    /// If hardware shows a different offset, change ProgramNumbering.dataByteOffset and this test together.
+    func testProvisionalProgramOffsetIsMinusOne() {
+        XCTAssertEqual(ProgramNumbering.dataByteOffset, -1)
+    }
 }

@@ -85,21 +85,72 @@ jobs:
           if-no-files-found: warn
 
   device-build-unsigned:
-    name: Unsigned iOS device build (compile check only)
+    name: Unsigned iOS device build + UNSIGNED IPA
     runs-on: macos-15
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build for generic iOS device (unsigned, not installable)
+      - name: Toolchain info
+        run: xcodebuild -version | tee toolchain.txt
+
+      - name: Build for generic iOS device (Release, unsigned)
         run: |
           set -o pipefail
           xcodebuild build -project "$PROJECT" -scheme "$SCHEME" \
+            -configuration Release \
             -destination "generic/platform=iOS" \
+            -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             2>&1 | tee device-build.log
 
-      - name: Summarize
+      - name: Package UNSIGNED IPA (Payload/AnagramRemote.app)
+        run: |
+          set -euo pipefail
+          APP="build/DerivedData/Build/Products/Release-iphoneos/AnagramRemote.app"
+          test -d "$APP"
+          rm -rf ipa-out && mkdir -p ipa-out/Payload
+          cp -R "$APP" ipa-out/Payload/AnagramRemote.app
+          (cd ipa-out && zip -qry AnagramRemote-unsigned.ipa Payload)
+          rm -rf ipa-out/Payload
+          cp ipa-out/AnagramRemote-unsigned.ipa .
+
+      - name: Validate IPA structure and write provenance
+        run: |
+          set -euo pipefail
+          unzip -l AnagramRemote-unsigned.ipa | tee ipa-listing.txt
+          grep -q "Payload/AnagramRemote.app/Info.plist" ipa-listing.txt
+          grep -q "Payload/AnagramRemote.app/AnagramRemote$" ipa-listing.txt
+          rm -rf ipa-check && mkdir ipa-check && unzip -q AnagramRemote-unsigned.ipa -d ipa-check
+          APP=ipa-check/Payload/AnagramRemote.app
+          PB=/usr/libexec/PlistBuddy
+          BID=$($PB -c "Print :CFBundleIdentifier" $APP/Info.plist)
+          PLAT=$($PB -c "Print :CFBundleSupportedPlatforms:0" $APP/Info.plist)
+          FAM=$($PB -c "Print :UIDeviceFamily:0" $APP/Info.plist)
+          [ "$BID" = "com.reshwinnishith.anagramremote" ]
+          [ "$PLAT" = "iPhoneOS" ]
+          [ "$FAM" = "2" ]
+          SIG=$(codesign -dv $APP 2>&1 || true)
+          BUILDINFO=$(xcrun vtool -show-build $APP/AnagramRemote 2>&1 | tr '\n' ' ' || true)
+          {
+            echo "AnagramRemote-unsigned.ipa  --  UNSIGNED. NOT INSTALLABLE on iPadOS as-is."
+            echo "It must be re-signed with a valid Apple signing identity and provisioning profile before install."
+            echo
+            echo "commit:      ${GITHUB_SHA}"
+            echo "branch/ref:  ${GITHUB_REF_NAME}"
+            echo "run:         ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "built (UTC): $(date -u '+%Y-%m-%d %H:%M:%S')"
+            echo "xcode:       $(head -1 toolchain.txt) / $(sed -n 2p toolchain.txt)"
+            echo "configuration: Release, generic/platform=iOS, CODE_SIGNING_ALLOWED=NO"
+            echo "bundle id:   $BID  platform: $PLAT  device family: $FAM (2 = iPad)"
+            echo "sha256:      $(shasum -a 256 AnagramRemote-unsigned.ipa | cut -d' ' -f1)"
+            echo "vtool:       $BUILDINFO"
+            echo "codesign -dv (informational; linker may add an ad-hoc signature, which is NOT installable):"
+            echo "$SIG"
+          } | tee UNSIGNED-IPA-PROVENANCE.txt
+          { echo "### UNSIGNED IPA"; echo '```'; cat UNSIGNED-IPA-PROVENANCE.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summarize build
         if: always()
         run: |
           {
@@ -109,10 +160,22 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload logs
+      - name: Upload UNSIGNED IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnagramRemote-UNSIGNED-ipa-${{ github.sha }}
+          path: |
+            AnagramRemote-unsigned.ipa
+            UNSIGNED-IPA-PROVENANCE.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload device logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: device-build-log
-          path: device-build.log
+          path: |
+            device-build.log
+            ipa-listing.txt
           if-no-files-found: warn

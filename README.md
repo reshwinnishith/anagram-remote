@@ -27,3 +27,8 @@ Nothing is ever sent on launch, reselect, or reconnect — only on a button tap.
   create a virtual destination (e.g. with MIDI Monitor, or an IAC Driver bus enabled in Audio MIDI Setup) and select it in the app
   running on a device/Mac that can see it. On the iPad, a USB-connected Mac does not expose destinations by default; use the Anagram itself and
   check the preset change on its display.
+
+## CI and unsigned IPA
+GitHub Actions (`.github/workflows/ios-build.yml`) builds for the iPad simulator, runs the unit tests, and builds an
+**UNSIGNED** device IPA artifact. It cannot be installed without signing — see `docs/INSTALL_PREPARATION.md`.
+Audit notes: `docs/M1_AUDIT.md`. The PC 1→0 / PC 2→1 mapping remains **provisional until tested on the Anagram**.

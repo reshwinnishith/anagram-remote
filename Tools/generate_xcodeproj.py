@@ -100,6 +100,7 @@ def cfg(cid, name, extra):
 app = ["PRODUCT_BUNDLE_IDENTIFIER = com.reshwinnishith.anagramremote", "PRODUCT_NAME = AnagramRemote",
        "GENERATE_INFOPLIST_FILE = YES", "INFOPLIST_KEY_UILaunchScreen_Generation = YES",
        'INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"',
+       "INFOPLIST_KEY_UIRequiresFullScreen = YES",
        "INFOPLIST_KEY_CFBundleDisplayName = \"Anagram Remote\"",
        "ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon", "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor",
        "CODE_SIGN_STYLE = Automatic", "MARKETING_VERSION = 0.1.0", "CURRENT_PROJECT_VERSION = 1",
