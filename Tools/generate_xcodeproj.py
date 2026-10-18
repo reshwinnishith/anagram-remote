@@ -109,7 +109,7 @@ test = ["PRODUCT_BUNDLE_IDENTIFIER = com.reshwinnishith.anagramremote.tests", "P
         'TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AnagramRemote.app/AnagramRemote"', 'BUNDLE_LOADER = "$(TEST_HOST)"',
         'LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"']
 w("/* Begin XCBuildConfiguration section */")
-w(cfg(CFG["PD"], "Debug", common + ["SWIFT_OPTIMIZATION_LEVEL = \"-Onone\"", "ONLY_ACTIVE_ARCH = YES"]))
+w(cfg(CFG["PD"], "Debug", common + ["SWIFT_OPTIMIZATION_LEVEL = \"-Onone\"", "ONLY_ACTIVE_ARCH = YES", "ENABLE_TESTABILITY = YES"]))
 w(cfg(CFG["PR"], "Release", common + ["SWIFT_COMPILATION_MODE = wholemodule"]))
 w(cfg(CFG["AD"], "Debug", app)); w(cfg(CFG["AR"], "Release", app))
 w(cfg(CFG["TD"], "Debug", test)); w(cfg(CFG["TR"], "Release", test))

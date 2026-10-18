@@ -151,6 +151,7 @@
 				TARGETED_DEVICE_FAMILY = 2;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				ONLY_ACTIVE_ARCH = YES;
+				ENABLE_TESTABILITY = YES;
 			}; name = Debug; };
 		A6120C4C5D30B57B4566307F = {isa = XCBuildConfiguration; buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
