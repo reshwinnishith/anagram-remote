@@ -1,0 +1,230 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		317B03B5260685DB0EDAB336 = {isa = PBXBuildFile; fileRef = 833C4D9328609ADB8C8EDB47; };
+		21AAEE73FCAE13A00B3EA7BA = {isa = PBXBuildFile; fileRef = 08A0A816DFFA8A44A9C86F76; };
+		A1F47314E8E15F1DECED44DA = {isa = PBXBuildFile; fileRef = ABEA1D30119060385DF95525; };
+		938CD2E9128F1A48D63F9E8D = {isa = PBXBuildFile; fileRef = 5663BBB2632B9C60ACBBC863; };
+		E2964159099E3B28CE5F2610 = {isa = PBXBuildFile; fileRef = CC614765D02003FA0C1FD79A; };
+		7229F611B94AED2A9881CD6B = {isa = PBXBuildFile; fileRef = 297BC602060F7CFA293AFA1D; };
+		70B59CD73740E86AC25684F7 = {isa = PBXBuildFile; fileRef = D3DFB23341F8CE03880DE1F9; };
+		2591F45DE314B774E4C89FE7 = {isa = PBXBuildFile; fileRef = 0BD246682097E406DB5173D8; };
+		38EE55497691B3E63AF37CD3 = {isa = PBXBuildFile; fileRef = 39BE6D0E3ABA77B92037CE35; };
+		419303F2BE3BE31A47290EA2 = {isa = PBXBuildFile; fileRef = 7EE27FCE9277B0B18493D30F; };
+		A54B04FDA37CB82D2B330988 = {isa = PBXBuildFile; fileRef = 32ACCEDB3F30B3B7ED44E320; };
+		04BF8DFDC7883C58458F218A = {isa = PBXBuildFile; fileRef = 14ED633BEBEE0B818FFC9868; };
+		627DA7F3BCC305923D6F320B = {isa = PBXBuildFile; fileRef = 1166D228441D25373F8B613F; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		431387EB7262E1CFC79B125E = {isa = PBXContainerItemProxy; containerPortal = 4DC844ABCCFC0D132D087C1C; proxyType = 1; remoteGlobalIDString = 99889D60A11D60E2AA54819D; remoteInfo = AnagramRemote; };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		833C4D9328609ADB8C8EDB47 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnagramRemoteApp.swift"; sourceTree = "<group>"; };
+		08A0A816DFFA8A44A9C86F76 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionView.swift"; sourceTree = "<group>"; };
+		ABEA1D30119060385DF95525 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionViewModel.swift"; sourceTree = "<group>"; };
+		5663BBB2632B9C60ACBBC863 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDITransport.swift"; sourceTree = "<group>"; };
+		CC614765D02003FA0C1FD79A = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreMIDITransport.swift"; sourceTree = "<group>"; };
+		297BC602060F7CFA293AFA1D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDICommand.swift"; sourceTree = "<group>"; };
+		D3DFB23341F8CE03880DE1F9 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDIConnectionManager.swift"; sourceTree = "<group>"; };
+		0BD246682097E406DB5173D8 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDIDestination.swift"; sourceTree = "<group>"; };
+		39BE6D0E3ABA77B92037CE35 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransmissionRecord.swift"; sourceTree = "<group>"; };
+		7EE27FCE9277B0B18493D30F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockMIDITransport.swift"; sourceTree = "<group>"; };
+		32ACCEDB3F30B3B7ED44E320 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDICommandTests.swift"; sourceTree = "<group>"; };
+		14ED633BEBEE0B818FFC9868 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDIConnectionManagerTests.swift"; sourceTree = "<group>"; };
+		1166D228441D25373F8B613F = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B9C486CBBD4C5E82DD1534B6 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnagramRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		19DDE46D5639C317BA948BA4 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnagramRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		777D116FF7769BD913CFBC4C = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		3760A15B53F0038BC0085363 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9FBCD1EC5BACE8EA5A708F78 = {isa = PBXGroup; children = (
+				FD4B53768B1618CC75DD100A,
+				C85F673A601E790C2C584544,
+				846B024EB1D923BB149C57AE,
+				8410F5608A7907BCDA787BE4,
+				7EE2C29B40E79C338C723C7D,
+				7F6D92847B04EA577C731867
+			); name = "AnagramRemote"; path = "AnagramRemote"; sourceTree = "<group>"; };
+		FD4B53768B1618CC75DD100A = {isa = PBXGroup; children = (
+				833C4D9328609ADB8C8EDB47
+			); name = "App"; path = "App"; sourceTree = "<group>"; };
+		C85F673A601E790C2C584544 = {isa = PBXGroup; children = (
+				08A0A816DFFA8A44A9C86F76,
+				ABEA1D30119060385DF95525
+			); name = "Connection"; path = "Features/Connection"; sourceTree = "<group>"; };
+		846B024EB1D923BB149C57AE = {isa = PBXGroup; children = (
+				5663BBB2632B9C60ACBBC863,
+				CC614765D02003FA0C1FD79A,
+				297BC602060F7CFA293AFA1D,
+				D3DFB23341F8CE03880DE1F9
+			); name = "MIDI"; path = "MIDI"; sourceTree = "<group>"; };
+		8410F5608A7907BCDA787BE4 = {isa = PBXGroup; children = (
+				0BD246682097E406DB5173D8,
+				39BE6D0E3ABA77B92037CE35
+			); name = "Models"; path = "Models"; sourceTree = "<group>"; };
+		7EE2C29B40E79C338C723C7D = {isa = PBXGroup; children = (
+				1166D228441D25373F8B613F
+			); name = "Resources"; path = "Resources"; sourceTree = "<group>"; };
+		7F6D92847B04EA577C731867 = {isa = PBXGroup; children = (
+				7EE27FCE9277B0B18493D30F,
+				32ACCEDB3F30B3B7ED44E320,
+				14ED633BEBEE0B818FFC9868
+			); name = "Tests"; path = "Tests"; sourceTree = "<group>"; };
+		FAD58DE7366495DB4650CFEF = {isa = PBXGroup; children = (
+				9FBCD1EC5BACE8EA5A708F78,
+				4FA33076EAECEB132DE7726D
+			); sourceTree = "<group>"; };
+		4FA33076EAECEB132DE7726D = {isa = PBXGroup; children = (
+				B9C486CBBD4C5E82DD1534B6,
+				19DDE46D5639C317BA948BA4
+			); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		99889D60A11D60E2AA54819D = {isa = PBXNativeTarget; buildConfigurationList = B982D177D5152E07D14941AE; buildPhases = (
+				D83123C46B337DD548B0C72C,
+				777D116FF7769BD913CFBC4C,
+				E364CB82AA32BB8A464E1F8F
+			); buildRules = (); dependencies = (); name = AnagramRemote; productName = AnagramRemote; productReference = B9C486CBBD4C5E82DD1534B6; productType = "com.apple.product-type.application"; };
+		124C588D1E4E0F457FAD7DFF = {isa = PBXNativeTarget; buildConfigurationList = 1BC6BF66902A751AC8EC7A9F; buildPhases = (
+				567139328FFB2398333413DE,
+				3760A15B53F0038BC0085363,
+				CE3EF27367A6982E157953A5
+			); buildRules = (); dependencies = (2254342BECCEAFBD04538E0A); name = AnagramRemoteTests; productName = AnagramRemoteTests; productReference = 19DDE46D5639C317BA948BA4; productType = "com.apple.product-type.bundle.unit-test"; };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4DC844ABCCFC0D132D087C1C = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastSwiftUpdateCheck = 1500; LastUpgradeCheck = 1500; }; buildConfigurationList = 1C0E4C714B9F72D584DE8B5A; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base); mainGroup = FAD58DE7366495DB4650CFEF; productRefGroup = 4FA33076EAECEB132DE7726D; projectDirPath = ""; projectRoot = ""; targets = (
+				99889D60A11D60E2AA54819D,
+				124C588D1E4E0F457FAD7DFF
+			); };
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E364CB82AA32BB8A464E1F8F = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (627DA7F3BCC305923D6F320B); runOnlyForDeploymentPostprocessing = 0; };
+		CE3EF27367A6982E157953A5 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D83123C46B337DD548B0C72C = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+				317B03B5260685DB0EDAB336,
+				21AAEE73FCAE13A00B3EA7BA,
+				A1F47314E8E15F1DECED44DA,
+				938CD2E9128F1A48D63F9E8D,
+				E2964159099E3B28CE5F2610,
+				7229F611B94AED2A9881CD6B,
+				70B59CD73740E86AC25684F7,
+				2591F45DE314B774E4C89FE7,
+				38EE55497691B3E63AF37CD3
+			); runOnlyForDeploymentPostprocessing = 0; };
+		567139328FFB2398333413DE = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+				419303F2BE3BE31A47290EA2,
+				A54B04FDA37CB82D2B330988,
+				04BF8DFDC7883C58458F218A
+			); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2254342BECCEAFBD04538E0A = {isa = PBXTargetDependency; target = 99889D60A11D60E2AA54819D; targetProxy = 431387EB7262E1CFC79B125E; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1BFEF058FC915816555210CC = {isa = XCBuildConfiguration; buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				SDKROOT = iphoneos;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				ONLY_ACTIVE_ARCH = YES;
+			}; name = Debug; };
+		A6120C4C5D30B57B4566307F = {isa = XCBuildConfiguration; buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				SDKROOT = iphoneos;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			}; name = Release; };
+		8DE6F31BE41618974C1F7C17 = {isa = XCBuildConfiguration; buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.reshwinnishith.anagramremote;
+				PRODUCT_NAME = AnagramRemote;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_CFBundleDisplayName = "Anagram Remote";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				MARKETING_VERSION = 0.1.0;
+				CURRENT_PROJECT_VERSION = 1;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+			}; name = Debug; };
+		2CC883470D8B525F56E0BB6E = {isa = XCBuildConfiguration; buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.reshwinnishith.anagramremote;
+				PRODUCT_NAME = AnagramRemote;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_CFBundleDisplayName = "Anagram Remote";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				MARKETING_VERSION = 0.1.0;
+				CURRENT_PROJECT_VERSION = 1;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+			}; name = Release; };
+		1A4784061330F2D212DD116C = {isa = XCBuildConfiguration; buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.reshwinnishith.anagramremote.tests;
+				PRODUCT_NAME = AnagramRemoteTests;
+				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_STYLE = Automatic;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AnagramRemote.app/AnagramRemote";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+			}; name = Debug; };
+		E8360BD69633DC4B3024D425 = {isa = XCBuildConfiguration; buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.reshwinnishith.anagramremote.tests;
+				PRODUCT_NAME = AnagramRemoteTests;
+				GENERATE_INFOPLIST_FILE = YES;
+				CODE_SIGN_STYLE = Automatic;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AnagramRemote.app/AnagramRemote";
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+			}; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1C0E4C714B9F72D584DE8B5A = {isa = XCConfigurationList; buildConfigurations = (
+				1BFEF058FC915816555210CC,
+				A6120C4C5D30B57B4566307F
+			); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		B982D177D5152E07D14941AE = {isa = XCConfigurationList; buildConfigurations = (
+				8DE6F31BE41618974C1F7C17,
+				2CC883470D8B525F56E0BB6E
+			); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		1BC6BF66902A751AC8EC7A9F = {isa = XCConfigurationList; buildConfigurations = (
+				1A4784061330F2D212DD116C,
+				E8360BD69633DC4B3024D425
+			); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = 4DC844ABCCFC0D132D087C1C;
+}
