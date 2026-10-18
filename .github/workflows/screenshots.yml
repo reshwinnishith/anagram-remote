@@ -5,6 +5,9 @@ name: iPad simulator screenshots
 # No repository code is modified, no signing or credentials are used.
 on:
   workflow_dispatch:
+  # TEMPORARY: lets a push to this branch register/run the workflow. Remove once screenshots are collected.
+  push:
+    branches: ["feature/m2-performance-ui"]
 
 permissions:
   contents: read
