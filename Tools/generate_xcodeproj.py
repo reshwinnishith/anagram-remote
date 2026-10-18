@@ -6,11 +6,12 @@ import hashlib, os
 
 def uid(s): return hashlib.md5(s.encode()).hexdigest()[:24].upper()
 
-APP = [("App", ["AnagramRemoteApp.swift"]),
-       ("Features/Connection", ["ConnectionView.swift", "ConnectionViewModel.swift"]),
+APP = [("App", ["AnagramRemoteApp.swift", "Theme.swift"]),
+       ("Features/Connection", ["ConnectionSettingsView.swift", "ConnectionViewModel.swift"]),
+       ("Features/Performance", ["PerformanceView.swift", "PerformanceComponents.swift", "PerformancePresentation.swift"]),
        ("MIDI", ["MIDITransport.swift", "CoreMIDITransport.swift", "MIDICommand.swift", "MIDIConnectionManager.swift"]),
        ("Models", ["MIDIDestination.swift", "TransmissionRecord.swift"])]
-TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift", "CoreMIDITransportInitializationTests.swift"]
+TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift", "CoreMIDITransportInitializationTests.swift", "PerformancePresentationTests.swift"]
 
 out = []
 w = out.append
