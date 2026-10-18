@@ -1,0 +1,114 @@
+name: iPad simulator screenshots
+
+# Manual (workflow_dispatch) only. Builds the unsigned simulator app, launches it on several iPad
+# simulators with NO MIDI hardware attached, and uploads real screenshots of the running app.
+# No repository code is modified, no signing or credentials are used.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT: AnagramRemote.xcodeproj
+  SCHEME: AnagramRemote
+  BUNDLE_ID: com.reshwinnishith.anagramremote
+
+jobs:
+  screenshots:
+    name: Launch app on iPad simulators and capture screenshots
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain info
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes
+          xcrun simctl list devices available | grep -i ipad || true
+
+      - name: Build app for iOS Simulator (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild build -project "$PROJECT" -scheme "$SCHEME" \
+            -configuration Debug \
+            -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tee screenshot-build.log
+          test -d build/DerivedData/Build/Products/Debug-iphonesimulator/AnagramRemote.app
+
+      - name: Select iPad simulators (closest to the target viewports)
+        run: |
+          python3 - <<'PY' > devices.tsv
+          import json, subprocess, re
+          data = json.loads(subprocess.check_output(["xcrun","simctl","list","devices","available","-j"]))["devices"]
+          # newest iOS runtime that has iPads
+          runtimes = sorted((k for k, v in data.items() if "iOS" in k and any("iPad" in d["name"] for d in v)),
+                            key=lambda k: [int(x) for x in re.findall(r"\d+", k.split("iOS")[-1])])
+          rt = runtimes[-1]
+          devs = data[rt]
+          # (slot label, ordered name regexes). Targets: ~1080x744, 1133x744, 1194x834, 1366x1024 pt landscape.
+          slots = [
+            ("small",  [r"^iPad \(10th generation\)$", r"^iPad \(A16\)$", r"^iPad \(9th generation\)$"]),
+            ("mini",   [r"^iPad mini \(A17 Pro\)$", r"^iPad mini \(6th generation\)$"]),
+            ("pro11",  [r"^iPad Pro 11-inch \(M4\)$", r"^iPad Air 11-inch", r"^iPad Pro \(11-inch\)"]),
+            ("pro13",  [r"^iPad Pro 13-inch \(M4\)$", r"^iPad Pro \(12\.9-inch\)", r"^iPad Air 13-inch"]),
+          ]
+          seen = set()
+          for label, pats in slots:
+              pick = next((d for p in pats for d in devs if re.search(p, d["name"]) and d["udid"] not in seen), None)
+              if pick:
+                  seen.add(pick["udid"])
+                  print("\t".join([label, pick["udid"], pick["name"], rt.split(".")[-1]]))
+          PY
+          cat devices.tsv
+          test -s devices.tsv
+
+      - name: Launch app (no MIDI hardware) and capture screenshots
+        run: |
+          mkdir -p screenshots
+          APP=build/DerivedData/Build/Products/Debug-iphonesimulator/AnagramRemote.app
+          : > screenshots/MANIFEST.txt
+          while IFS=$'\t' read -r LABEL UDID NAME RT; do
+            SAFE=$(echo "$NAME" | tr -c 'A-Za-z0-9\n' '_' | sed 's/_*$//')
+            echo "=== $NAME ($RT) $UDID"
+            xcrun simctl boot "$UDID"
+            xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl install "$UDID" "$APP"
+            xcrun simctl launch "$UDID" "$BUNDLE_ID"
+            sleep 10
+            RAW="screenshots/raw_${SAFE}.png"
+            xcrun simctl io "$UDID" screenshot "$RAW"
+            W=$(sips -g pixelWidth "$RAW" | awk '/pixelWidth/{print $2}')
+            H=$(sips -g pixelHeight "$RAW" | awk '/pixelHeight/{print $2}')
+            ORIENT=landscape
+            OUT="screenshots/${SAFE}_${RT}_landscape_${W}x${H}px.png"
+            if [ "$H" -gt "$W" ]; then
+              # App is landscape-only; if the capture is a portrait framebuffer, rotate a COPY and label it.
+              ORIENT="portrait-framebuffer-rotated-90"
+              sips -r 90 "$RAW" --out "screenshots/tmp.png" >/dev/null
+              W2=$(sips -g pixelWidth screenshots/tmp.png | awk '/pixelWidth/{print $2}')
+              H2=$(sips -g pixelHeight screenshots/tmp.png | awk '/pixelHeight/{print $2}')
+              OUT="screenshots/${SAFE}_${RT}_landscape-rotated_${W2}x${H2}px.png"
+              mv screenshots/tmp.png "$OUT"
+            fi
+            echo "$LABEL | $NAME | $RT | raw ${W}x${H}px | orientation: $ORIENT | file: $(basename "$OUT")" | tee -a screenshots/MANIFEST.txt
+            xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
+            xcrun simctl shutdown "$UDID" || true
+          done < devices.tsv
+          echo "Logical points are the pixel size divided by the device scale (2x on all current iPads)." >> screenshots/MANIFEST.txt
+          echo "App launched with no MIDI hardware: expect the 'No MIDI devices found' state." >> screenshots/MANIFEST.txt
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AnagramRemote-simulator-screenshots-${{ github.sha }}
+          path: |
+            screenshots/*.png
+            screenshots/MANIFEST.txt
+            screenshot-build.log
+          if-no-files-found: warn
+          retention-days: 14
