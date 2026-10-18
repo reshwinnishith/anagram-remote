@@ -5,6 +5,7 @@ import Foundation
 final class MockMIDITransport: MIDITransport {
     var destinations: [MIDIDestination]
     var onSetupChanged: (() -> Void)?
+    var initializationError: MIDITransportError?
     var sendError: Error?
     private(set) var sent: [(bytes: [UInt8], destinationID: Int32)] = []
 

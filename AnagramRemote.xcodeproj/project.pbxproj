@@ -19,6 +19,7 @@
 		419303F2BE3BE31A47290EA2 = {isa = PBXBuildFile; fileRef = 7EE27FCE9277B0B18493D30F; };
 		A54B04FDA37CB82D2B330988 = {isa = PBXBuildFile; fileRef = 32ACCEDB3F30B3B7ED44E320; };
 		04BF8DFDC7883C58458F218A = {isa = PBXBuildFile; fileRef = 14ED633BEBEE0B818FFC9868; };
+		4D2621B5BF32089F8595D03B = {isa = PBXBuildFile; fileRef = B00B28E192597D7D07BB5829; };
 		627DA7F3BCC305923D6F320B = {isa = PBXBuildFile; fileRef = 1166D228441D25373F8B613F; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,7 @@
 		7EE27FCE9277B0B18493D30F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockMIDITransport.swift"; sourceTree = "<group>"; };
 		32ACCEDB3F30B3B7ED44E320 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDICommandTests.swift"; sourceTree = "<group>"; };
 		14ED633BEBEE0B818FFC9868 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MIDIConnectionManagerTests.swift"; sourceTree = "<group>"; };
+		B00B28E192597D7D07BB5829 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreMIDITransportInitializationTests.swift"; sourceTree = "<group>"; };
 		1166D228441D25373F8B613F = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B9C486CBBD4C5E82DD1534B6 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnagramRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		19DDE46D5639C317BA948BA4 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnagramRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,7 +83,8 @@
 		7F6D92847B04EA577C731867 = {isa = PBXGroup; children = (
 				7EE27FCE9277B0B18493D30F,
 				32ACCEDB3F30B3B7ED44E320,
-				14ED633BEBEE0B818FFC9868
+				14ED633BEBEE0B818FFC9868,
+				B00B28E192597D7D07BB5829
 			); name = "Tests"; path = "Tests"; sourceTree = "<group>"; };
 		FAD58DE7366495DB4650CFEF = {isa = PBXGroup; children = (
 				9FBCD1EC5BACE8EA5A708F78,
@@ -133,7 +136,8 @@
 		567139328FFB2398333413DE = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
 				419303F2BE3BE31A47290EA2,
 				A54B04FDA37CB82D2B330988,
-				04BF8DFDC7883C58458F218A
+				04BF8DFDC7883C58458F218A,
+				4D2621B5BF32089F8595D03B
 			); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 

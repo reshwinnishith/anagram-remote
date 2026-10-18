@@ -13,6 +13,8 @@ enum MIDISendError: Error, Equatable, LocalizedError {
 }
 
 enum ConnectionState: Equatable {
+    /// CoreMIDI could not be initialised; the message is user-facing. Nothing can be sent.
+    case transportUnavailable(String)
     case noDestinationsAvailable
     case noDestinationSelected
     case connected(String)
@@ -39,11 +41,13 @@ final class MIDIConnectionManager {
 
     init(transport: MIDITransport) {
         self.transport = transport
+        lastError = transport.initializationError?.localizedDescription
         refresh()
         transport.onSetupChanged = { [weak self] in self?.refresh() }
     }
 
     var state: ConnectionState {
+        if let e = transport.initializationError { return .transportUnavailable(e.localizedDescription) }
         guard let id = selectedDestinationID, let name = selectedDestinationName else {
             return destinations.isEmpty ? .noDestinationsAvailable : .noDestinationSelected
         }
@@ -92,6 +96,7 @@ final class MIDIConnectionManager {
     @discardableResult
     func sendProgramChange(program: Int) -> Bool {
         do {
+            if let e = transport.initializationError { throw e }
             let bytes = try MIDICommand.programChange(channel: channel, program: program).bytes()
             guard let id = selectedDestinationID, let name = selectedDestinationName else {
                 throw MIDISendError.noDestinationSelected

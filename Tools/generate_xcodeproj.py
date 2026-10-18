@@ -10,7 +10,7 @@ APP = [("App", ["AnagramRemoteApp.swift"]),
        ("Features/Connection", ["ConnectionView.swift", "ConnectionViewModel.swift"]),
        ("MIDI", ["MIDITransport.swift", "CoreMIDITransport.swift", "MIDICommand.swift", "MIDIConnectionManager.swift"]),
        ("Models", ["MIDIDestination.swift", "TransmissionRecord.swift"])]
-TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift"]
+TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift", "CoreMIDITransportInitializationTests.swift"]
 
 out = []
 w = out.append

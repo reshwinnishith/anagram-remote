@@ -26,6 +26,7 @@ final class ConnectionViewModel: ObservableObject {
 
     var statusText: String {
         switch state {
+        case .transportUnavailable(let m): return m
         case .noDestinationsAvailable: return "No MIDI destinations found"
         case .noDestinationSelected: return "Select a MIDI destination"
         case .connected(let n): return "Ready: \(n)"

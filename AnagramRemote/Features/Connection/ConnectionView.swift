@@ -42,7 +42,7 @@ struct ConnectionView: View {
     private var statusColor: Color {
         switch vm.state {
         case .connected: return .green
-        case .disconnected: return .red
+        case .disconnected, .transportUnavailable: return .red
         default: return .orange
         }
     }

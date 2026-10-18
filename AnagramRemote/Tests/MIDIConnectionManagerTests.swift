@@ -112,4 +112,29 @@ final class MIDIConnectionManagerTests: XCTestCase {
     func testProvisionalProgramOffsetIsMinusOne() {
         XCTAssertEqual(ProgramNumbering.dataByteOffset, -1)
     }
+
+    func testInitializationFailureIsSurfacedAndBlocksSending() {
+        let t = MockMIDITransport(destinations: [anagram])
+        t.initializationError = .outputPortCreationFailed(-50)
+        let m = MIDIConnectionManager(transport: t)
+        m.selectDestination(id: 42)
+        XCTAssertEqual(m.state, .transportUnavailable(MIDITransportError.outputPortCreationFailed(-50).localizedDescription))
+        XCTAssertFalse(m.canSend)
+        XCTAssertTrue(m.lastError?.contains("-50") == true)
+        XCTAssertFalse(m.sendProgramChange(program: 1))
+        XCTAssertTrue(m.lastError?.contains("-50") == true)
+        XCTAssertTrue(t.sent.isEmpty)
+        XCTAssertNil(m.lastTransmission)
+    }
+
+    func testInitializationFailureVisibleInViewModel() {
+        let t = MockMIDITransport()
+        t.initializationError = .clientCreationFailed(-50)
+        let vm = ConnectionViewModel(manager: MIDIConnectionManager(transport: t))
+        XCTAssertFalse(vm.canSend)
+        XCTAssertTrue(vm.statusText.contains("-50"))
+        XCTAssertTrue(vm.lastError?.contains("-50") == true)
+        vm.sendPreset(1)
+        XCTAssertTrue(t.sent.isEmpty)
+    }
 }
