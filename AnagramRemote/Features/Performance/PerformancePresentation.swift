@@ -98,10 +98,10 @@ struct PerformancePresentation {
         }
         if let sent = vm.lastTransmission {
             preset = PresetReadout(label: PresetLabel.text(forProgram: sent.program),
-                                   subtitle: "Last sent · not confirmed by device")
-            lastSentText = sent.summary + " — handed to CoreMIDI, not device-confirmed"
+                                   subtitle: "Preset shortcut history · not confirmed by device")
+            lastSentText = "Preset shortcut: " + sent.summary + " — handed to CoreMIDI, not device-confirmed"
         } else {
-            preset = PresetReadout(label: "—", subtitle: "Unknown · no preset sent yet")
+            preset = PresetReadout(label: "—", subtitle: "Preset shortcut history · none sent yet · not confirmed by device")
             lastSentText = nil
         }
         if let e = vm.lastError {

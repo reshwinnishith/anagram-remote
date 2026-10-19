@@ -50,58 +50,77 @@ struct SceneButton: View {
     }
 }
 
-/// Footswitch-style placeholder for a programmable stomp. Inert in Batch A: no assignment, no MIDI.
-/// Layout: numbered tab + unlit LED on top, prominent label, assignment status underneath.
+struct StompPressStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.72 : 1)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+    }
+}
+
 struct StompButton: View {
-    let stomp: StompPresentation
+    let tile: StompTile
+    let action: () -> Void
     @ScaledMetric(relativeTo: .title2) private var badge: CGFloat = 30
 
-    private var identity: Color {
-        stomp.accent ?? Theme.stompAccents[(stomp.index - 1) % Theme.stompAccents.count]
-    }
+    private var identity: Color { StompAccent.color(for: tile.accentID) }
 
     var body: some View {
+        if tile.isEnabled {
+            Button(action: action) { face }
+                .buttonStyle(StompPressStyle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(tile.accessibilityLabel)
+                .accessibilityValue(tile.accessibilityValue)
+                .accessibilityHint(tile.accessibilityHint)
+                .accessibilityIdentifier("stomp-\(tile.slot)")
+        } else {
+            face
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(tile.accessibilityLabel)
+                .accessibilityValue(tile.accessibilityValue + ", unavailable")
+                .accessibilityHint(tile.accessibilityHint)
+                .accessibilityIdentifier("stomp-\(tile.slot)")
+        }
+    }
+
+    private var face: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("\(stomp.index)")
+                Text("\(tile.slot)")
                     .font(.footnote.bold().monospacedDigit())
                     .foregroundStyle(Theme.textPrimary)
                     .frame(width: badge, height: badge)
                     .background(Circle().strokeBorder(identity.opacity(0.7), lineWidth: 2))
                 Spacer(minLength: 0)
-                // Unlit LED: hollow ring, never filled while unassigned.
                 Circle()
                     .strokeBorder(Theme.textSecondary, lineWidth: 2)
                     .frame(width: 16, height: 16)
             }
             Spacer(minLength: 4)
-            Text(stomp.customLabel ?? stomp.title)
+            Text(tile.label)
                 .font(.title2.weight(.bold))
                 .lineLimit(1).minimumScaleFactor(0.6)
                 .foregroundStyle(Theme.textPrimary)
-            Text(stomp.statusText)
-                .font(.caption.bold())
-                .tracking(0.6)
-                .foregroundStyle(Theme.textSecondary)
-                .lineLimit(1).minimumScaleFactor(0.7)
-                .padding(.top, 4)
-            if stomp.isConfigured {
-                Text("NOT ACTIVE YET").font(.caption2.bold()).tracking(0.6)
-                    .foregroundStyle(Theme.textSecondary).lineLimit(1).minimumScaleFactor(0.7)
+            if tile.kind != .unassigned {
+                Text(tile.summary)
+                    .font(.caption.bold())
+                    .tracking(0.6)
+                    .foregroundStyle(Theme.textSecondary)
+                    .lineLimit(1).minimumScaleFactor(0.7)
+                    .padding(.top, 4)
             }
+            Text(tile.detail).font(.caption2.bold()).tracking(0.6)
+                .foregroundStyle(tile.isEnabled ? Theme.textPrimary : Theme.textSecondary)
+                .lineLimit(1).minimumScaleFactor(0.6)
             Spacer(minLength: 4)
-            // Footswitch plate cue.
-            Capsule().fill(Theme.border).frame(width: 56, height: 6)
+            Capsule().fill(tile.isEnabled ? identity.opacity(0.8) : Theme.border).frame(width: 56, height: 6)
         }
         .padding(Theme.Spacing.gutter - 4)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(minHeight: Theme.minTouch)
-        .themedCard(dashed: true)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(stomp.isConfigured
-            ? "\(stomp.customLabel ?? stomp.title), \(stomp.statusText), configured but not active yet, unavailable"
-            : "\(stomp.customLabel ?? stomp.title), unassigned, unavailable")
-        .accessibilityIdentifier("stomp-\(stomp.index)")
+        .themedCard(raised: tile.isEnabled, dashed: !tile.isEnabled)
+        .contentShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
     }
 }
 

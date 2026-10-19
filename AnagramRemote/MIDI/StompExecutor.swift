@@ -65,6 +65,10 @@ final class StompExecutor {
         pressed.removeAll()
     }
 
+    func resetToggleState() {
+        toggles.removeAll()
+    }
+
     @discardableResult
     func activate(_ assignment: StompAssignment) -> ExecutionOutcome {
         if let runtime = toggles[assignment.slot], runtime.action != assignment.action {

@@ -1,12 +1,44 @@
 import SwiftUI
 
-/// Landscape Performance screen. Batch A: layout only; the only MIDI sends are the M1 preset buttons.
+/// Owns the single connection manager, view model, stomp configuration and stomp controller for the screen's lifetime.
+@MainActor
+final class PerformanceCore: ObservableObject {
+    let connection: ConnectionViewModel
+    let config: StompConfigModel
+    let stomps: StompPerformanceController
+
+    init(connection: ConnectionViewModel, config: StompConfigModel) {
+        self.connection = connection
+        self.config = config
+        self.stomps = StompPerformanceController(connection: connection, config: config)
+    }
+
+    static func live() -> PerformanceCore {
+        let manager = MIDIConnectionManager(transport: CoreMIDITransport())
+        return PerformanceCore(connection: ConnectionViewModel(manager: manager), config: StompConfigModel.live())
+    }
+}
+
 struct PerformanceView: View {
-    @StateObject private var vm = ConnectionViewModel()
+    @StateObject private var core = PerformanceCore.live()
+
+    var body: some View { PerformanceContent(core: core) }
+}
+
+/// Landscape Performance screen: M1 preset shortcuts plus discrete stomp controls (D2).
+struct PerformanceContent: View {
+    @ObservedObject private var vm: ConnectionViewModel
+    @ObservedObject private var stompConfig: StompConfigModel
+    @ObservedObject private var stomps: StompPerformanceController
     @State private var showConnection = false
-    @StateObject private var stompConfig = StompConfigModel.live()
     @State private var confirmEdit = false
     @State private var showEditor = false
+
+    init(core: PerformanceCore) {
+        _vm = ObservedObject(wrappedValue: core.connection)
+        _stompConfig = ObservedObject(wrappedValue: core.config)
+        _stomps = ObservedObject(wrappedValue: core.stomps)
+    }
 
     var body: some View {
         let p = PerformancePresentation(vm: vm)
@@ -68,11 +100,11 @@ struct PerformanceView: View {
     /// Compact single-row strip: preset identity on the left, the two working M1 shortcuts on the right.
     private func presetBar(_ p: PerformancePresentation) -> some View {
         HStack(spacing: Theme.Spacing.gutter) {
-            Text("PRESET").font(.caption.bold()).tracking(1).foregroundStyle(Theme.textSecondary)
+            Text("LAST SHORTCUT SENT").font(.caption.bold()).tracking(1).foregroundStyle(Theme.textSecondary)
             Text(p.preset.label)
                 .font(.system(size: 44, weight: .heavy, design: .rounded).monospacedDigit())
                 .lineLimit(1).minimumScaleFactor(0.6)
-                .accessibilityLabel("Preset \(p.preset.label). \(p.preset.subtitle)")
+                .accessibilityLabel("Last preset shortcut sent: \(p.preset.label). \(p.preset.subtitle)")
                 .accessibilityIdentifier("preset-readout")
             Text(p.preset.subtitle)
                 .font(.footnote).foregroundStyle(Theme.textSecondary)
@@ -102,7 +134,8 @@ struct PerformanceView: View {
             ForEach(0..<PerformanceLayout.stompRows, id: \.self) { row in
                 HStack(spacing: Theme.Spacing.gutter) {
                     ForEach(0..<PerformanceLayout.stompColumns, id: \.self) { col in
-                        StompButton(stomp: StompPresentation(assignment: stompConfig.resolved(slot: row * PerformanceLayout.stompColumns + col + 1, preset: nil)))
+                        let slot = row * PerformanceLayout.stompColumns + col + 1
+                        StompButton(tile: stomps.tile(slot: slot)) { stomps.activate(slot: slot) }
                     }
                 }
             }
@@ -111,14 +144,23 @@ struct PerformanceView: View {
 
     private func statusStrip(_ p: PerformancePresentation) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(p.lastSentText ?? "No MIDI sent this session")
+            Text(p.lastSentText ?? "No preset shortcut sent this session.")
                 .font(.system(.footnote, design: .monospaced)).foregroundStyle(Theme.textSecondary)
+            if let t = stomps.lastSendText {
+                Text(t).font(.system(.footnote, design: .monospaced)).foregroundStyle(Theme.textSecondary)
+                    .accessibilityIdentifier("stomp-last-send")
+            }
+            if let f = stomps.failure {
+                Label(f.message, systemImage: "xmark.octagon.fill")
+                    .font(.footnote.bold()).foregroundStyle(Theme.error)
+                    .accessibilityIdentifier("stomp-failure")
+            }
             if let e = p.errorText {
                 Label("Error: \(e)", systemImage: "exclamationmark.triangle.fill")
                     .font(.footnote.bold()).foregroundStyle(Theme.error)
             }
         }
-        .lineLimit(2)
+        .lineLimit(1)
         .frame(maxWidth: .infinity, minHeight: 24, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("status-strip")

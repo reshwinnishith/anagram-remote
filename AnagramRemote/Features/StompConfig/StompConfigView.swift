@@ -95,7 +95,7 @@ struct StompConfigView: View {
 
     private var footer: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Label("Editing never sends MIDI. Stomps are not active in this version.", systemImage: "info.circle")
+            Label("Editing never sends MIDI. Performance uses the global assignments only; preset overrides are not applied there yet.", systemImage: "info.circle")
             if let t = model.lastSavedAt {
                 Text("Last saved \(t.formatted(date: .omitted, time: .shortened))")
             }

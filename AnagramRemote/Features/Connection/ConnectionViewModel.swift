@@ -10,7 +10,7 @@ final class ConnectionViewModel: ObservableObject {
     @Published private(set) var lastTransmission: TransmissionRecord?
     @Published private(set) var lastError: String?
 
-    private let manager: MIDIConnectionManager
+    let manager: MIDIConnectionManager
 
     init(manager: MIDIConnectionManager) {
         self.manager = manager

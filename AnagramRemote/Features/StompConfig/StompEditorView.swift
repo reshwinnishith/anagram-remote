@@ -268,10 +268,10 @@ struct StompEditorView: View {
         }
 
         Section {
-            Label("Stomps are not active in this version.", systemImage: "info.circle")
+            Label("Fixed, toggle and Program Change stomps send from Performance. Momentary stomps are not active yet.", systemImage: "info.circle")
                 .font(.footnote.weight(.semibold))
                 .accessibilityIdentifier("editor-inactive-notice")
-            Text("The behaviour described above applies when stomp MIDI execution is available. The Anagram must be set up to respond to this message. Editing and saving never send anything to it, and there is no test send in this version.")
+            Text("The Anagram must be set up to respond to this message. Editing and saving never send anything to it, and there is no test send in this version.")
                 .font(.footnote).foregroundStyle(Theme.textSecondary)
         }
     }
