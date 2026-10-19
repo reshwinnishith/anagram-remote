@@ -9,12 +9,12 @@ def uid(s): return hashlib.md5(s.encode()).hexdigest()[:24].upper()
 APP = [("App", ["AnagramRemoteApp.swift", "Theme.swift"]),
        ("Features/Connection", ["ConnectionSettingsView.swift", "ConnectionViewModel.swift"]),
        ("Features/Performance", ["PerformanceView.swift", "PerformanceComponents.swift", "PerformancePresentation.swift"]),
-       ("MIDI", ["MIDITransport.swift", "CoreMIDITransport.swift", "MIDICommand.swift", "MIDIConnectionManager.swift"]),
+       ("MIDI", ["MIDITransport.swift", "CoreMIDITransport.swift", "MIDICommand.swift", "MIDIConnectionManager.swift", "MIDICommandSending.swift", "StompExecutor.swift"]),
        ("Models", ["MIDIDestination.swift", "TransmissionRecord.swift"]),
        ("Features/StompConfig", ["StompEditorDraft.swift", "StompAssignmentSummary.swift", "StompAccentColor.swift", "StompConfigModel.swift", "StompConfigView.swift", "StompEditorView.swift"]),
        ("Stomps", ["StompModels.swift", "AssignmentValidator.swift", "StompProfile.swift", "AssignmentStore.swift"])]
 TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift", "CoreMIDITransportInitializationTests.swift", "PerformancePresentationTests.swift",
-         "StompModelsTests.swift", "AssignmentValidatorTests.swift", "StompProfileTests.swift", "AssignmentStoreTests.swift",
+         "StompModelsTests.swift", "AssignmentValidatorTests.swift", "StompProfileTests.swift", "AssignmentStoreTests.swift", "MIDICommandSendingTests.swift", "StompExecutorTests.swift",
          "StompEditorDraftTests.swift", "StompConfigModelTests.swift", "StompPerformanceIntegrationTests.swift"]
 
 out = []

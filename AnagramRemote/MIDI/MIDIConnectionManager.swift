@@ -26,7 +26,7 @@ enum ConnectionState: Equatable {
 /// Owns destination list, selection, channel, and send diagnostics.
 /// Sends happen ONLY via `sendProgramChange`, which is called from explicit user actions.
 @MainActor
-final class MIDIConnectionManager {
+final class MIDIConnectionManager: MIDICommandSending {
     private let transport: MIDITransport
 
     private(set) var destinations: [MIDIDestination] = []
@@ -35,6 +35,8 @@ final class MIDIConnectionManager {
     private(set) var channel: Int = 1
     private(set) var lastTransmission: TransmissionRecord?
     private(set) var lastError: String?
+    private(set) var lastCommandRecord: CommandRecord?
+    private(set) var lastCommandFailure: String?
 
     /// Fired after any state change so the view model can republish.
     var onChange: (() -> Void)?
@@ -115,5 +117,50 @@ final class MIDIConnectionManager {
             onChange?()
             return false
         }
+    }
+
+    func selectedDestination() -> MIDIDestination? {
+        guard let id = selectedDestinationID else { return nil }
+        return destinations.first { $0.id == id }
+    }
+
+    @discardableResult
+    func send(_ command: MIDICommand, to target: SendTarget) -> CommandSendResult {
+        let result = deliver(command, to: target)
+        switch result {
+        case .sent(let receipt):
+            lastCommandRecord = CommandRecord(date: receipt.date, destinationName: receipt.destinationName,
+                                              command: command, bytes: receipt.bytes)
+            lastCommandFailure = nil
+        case .failed(let failure):
+            lastCommandFailure = failure.localizedDescription
+        }
+        onChange?()
+        return result
+    }
+
+    private func deliver(_ command: MIDICommand, to target: SendTarget) -> CommandSendResult {
+        if let e = transport.initializationError { return .failed(.transportUnavailable(e.localizedDescription)) }
+        let bytes: [UInt8]
+        do { bytes = try command.bytes() }
+        catch let e as MIDIValidationError { return .failed(.invalidCommand(e)) }
+        catch { return .failed(.transportRejected(error.localizedDescription)) }
+
+        let id: Int32
+        let name: String
+        switch target {
+        case .selected:
+            guard let selectedID = selectedDestinationID, let selectedName = selectedDestinationName else {
+                return .failed(.noDestinationSelected)
+            }
+            id = selectedID; name = selectedName
+        case let .destination(targetID, targetName):
+            id = targetID; name = targetName
+        }
+        guard destinations.contains(where: { $0.id == id }) else { return .failed(.destinationUnavailable(name)) }
+
+        do { try transport.send(bytes, to: id) }
+        catch { return .failed(.transportRejected(error.localizedDescription)) }
+        return .sent(CommandSendReceipt(date: Date(), destinationID: id, destinationName: name, command: command, bytes: bytes))
     }
 }
