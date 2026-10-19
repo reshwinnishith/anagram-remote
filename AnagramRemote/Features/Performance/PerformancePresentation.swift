@@ -43,9 +43,21 @@ struct StompPresentation: Identifiable {
     var accent: Color? = nil
     var localState: StompLocalState = .unassigned
     var confirmedState: StompConfirmedState = .notAvailable
+    /// Set when a saved assignment exists (C2). Display only: stomps stay inert and send nothing.
+    var assignedSummary: String? = nil
+    var isConfigured: Bool { assignedSummary != nil }
     var isEnabled: Bool { false }
-    var statusText: String { "UNASSIGNED" }
+    var statusText: String { assignedSummary ?? "UNASSIGNED" }
     static let all = (1...PerformanceLayout.stompCount).map { StompPresentation(index: $0) }
+
+    /// Display model for a saved global assignment. No state (ON/OFF, confirmed) is implied.
+    init(assignment a: StompAssignment) {
+        index = a.slot
+        customLabel = a.name.isEmpty ? nil : a.name
+        accent = StompAccent.color(for: a.accentID)
+        assignedSummary = StompAssignmentSummary.isAssigned(a) ? StompAssignmentSummary.message(a) : nil
+    }
+    init(index: Int) { self.index = index }
 }
 
 enum PerformanceLayout {

@@ -57,7 +57,7 @@ struct StompButton: View {
     @ScaledMetric(relativeTo: .title2) private var badge: CGFloat = 30
 
     private var identity: Color {
-        Theme.stompAccents[(stomp.index - 1) % Theme.stompAccents.count]
+        stomp.accent ?? Theme.stompAccents[(stomp.index - 1) % Theme.stompAccents.count]
     }
 
     var body: some View {
@@ -85,6 +85,10 @@ struct StompButton: View {
                 .foregroundStyle(Theme.textSecondary)
                 .lineLimit(1).minimumScaleFactor(0.7)
                 .padding(.top, 4)
+            if stomp.isConfigured {
+                Text("NOT ACTIVE YET").font(.caption2.bold()).tracking(0.6)
+                    .foregroundStyle(Theme.textSecondary).lineLimit(1).minimumScaleFactor(0.7)
+            }
             Spacer(minLength: 4)
             // Footswitch plate cue.
             Capsule().fill(Theme.border).frame(width: 56, height: 6)
@@ -94,7 +98,9 @@ struct StompButton: View {
         .frame(minHeight: Theme.minTouch)
         .themedCard(dashed: true)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(stomp.title), unassigned, unavailable")
+        .accessibilityLabel(stomp.isConfigured
+            ? "\(stomp.customLabel ?? stomp.title), \(stomp.statusText), configured but not active yet, unavailable"
+            : "\(stomp.customLabel ?? stomp.title), unassigned, unavailable")
         .accessibilityIdentifier("stomp-\(stomp.index)")
     }
 }
@@ -137,5 +143,26 @@ struct ConnectionSettingsButton: View {
         .foregroundStyle(Theme.textPrimary)
         .accessibilityLabel("Connection settings")
         .accessibilityIdentifier("connection-settings")
+    }
+}
+
+/// Entry to the separate editing area. A deliberate two-step (tap, then confirm) works the same for touch,
+/// VoiceOver and Switch Control, unlike a long press.
+struct EditControlsButton: View {
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Label("Edit", systemImage: "slider.horizontal.3")
+                .font(.headline)
+                .lineLimit(1)
+                .padding(.horizontal, Theme.Spacing.gutter)
+                .frame(minHeight: Theme.minTouch)
+                .themedCard()
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(Theme.textPrimary)
+        .accessibilityLabel("Edit controls")
+        .accessibilityHint("Opens the stomp configuration area. Asks for confirmation first.")
+        .accessibilityIdentifier("edit-controls")
     }
 }

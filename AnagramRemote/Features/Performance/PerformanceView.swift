@@ -4,6 +4,9 @@ import SwiftUI
 struct PerformanceView: View {
     @StateObject private var vm = ConnectionViewModel()
     @State private var showConnection = false
+    @StateObject private var stompConfig = StompConfigModel.live()
+    @State private var confirmEdit = false
+    @State private var showEditor = false
 
     var body: some View {
         let p = PerformancePresentation(vm: vm)
@@ -23,6 +26,13 @@ struct PerformanceView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showConnection) { ConnectionSettingsView(vm: vm) }
+        .confirmationDialog("Edit controls?", isPresented: $confirmEdit, titleVisibility: .visible) {
+            Button("Edit Controls") { showEditor = true }
+            Button("Stay on Performance", role: .cancel) {}
+        } message: { Text("Editing is separate from performance and never sends MIDI.") }
+        .fullScreenCover(isPresented: $showEditor) {
+            StompConfigView(model: stompConfig) { showEditor = false }
+        }
     }
 
     private func header(_ p: PerformancePresentation) -> some View {
@@ -50,6 +60,7 @@ struct PerformanceView: View {
                 .foregroundStyle(Theme.textSecondary)
                 .lineLimit(1).minimumScaleFactor(0.7)
                 .accessibilityAddTraits(.isHeader)
+            EditControlsButton { confirmEdit = true }
             ConnectionSettingsButton { showConnection = true }
         }
     }
@@ -91,7 +102,7 @@ struct PerformanceView: View {
             ForEach(0..<PerformanceLayout.stompRows, id: \.self) { row in
                 HStack(spacing: Theme.Spacing.gutter) {
                     ForEach(0..<PerformanceLayout.stompColumns, id: \.self) { col in
-                        StompButton(stomp: StompPresentation.all[row * PerformanceLayout.stompColumns + col])
+                        StompButton(stomp: StompPresentation(assignment: stompConfig.resolved(slot: row * PerformanceLayout.stompColumns + col + 1, preset: nil)))
                     }
                 }
             }
