@@ -10,8 +10,10 @@ APP = [("App", ["AnagramRemoteApp.swift", "Theme.swift"]),
        ("Features/Connection", ["ConnectionSettingsView.swift", "ConnectionViewModel.swift"]),
        ("Features/Performance", ["PerformanceView.swift", "PerformanceComponents.swift", "PerformancePresentation.swift"]),
        ("MIDI", ["MIDITransport.swift", "CoreMIDITransport.swift", "MIDICommand.swift", "MIDIConnectionManager.swift"]),
-       ("Models", ["MIDIDestination.swift", "TransmissionRecord.swift"])]
-TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift", "CoreMIDITransportInitializationTests.swift", "PerformancePresentationTests.swift"]
+       ("Models", ["MIDIDestination.swift", "TransmissionRecord.swift"]),
+       ("Stomps", ["StompModels.swift", "AssignmentValidator.swift", "StompProfile.swift", "AssignmentStore.swift"])]
+TESTS = ["MockMIDITransport.swift", "MIDICommandTests.swift", "MIDIConnectionManagerTests.swift", "CoreMIDITransportInitializationTests.swift", "PerformancePresentationTests.swift",
+         "StompModelsTests.swift", "AssignmentValidatorTests.swift", "StompProfileTests.swift", "AssignmentStoreTests.swift"]
 
 out = []
 w = out.append
