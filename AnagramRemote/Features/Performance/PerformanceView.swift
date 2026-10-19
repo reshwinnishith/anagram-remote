@@ -7,7 +7,7 @@ struct PerformanceView: View {
 
     var body: some View {
         let p = PerformancePresentation(vm: vm)
-        VStack(spacing: Theme.Spacing.gutter) {
+        VStack(spacing: 12) {
             header(p)
             presetBar(p)
             HStack(spacing: Theme.Spacing.gutter) {
@@ -27,11 +27,12 @@ struct PerformanceView: View {
 
     private func header(_ p: PerformancePresentation) -> some View {
         HStack(spacing: Theme.Spacing.gutter) {
-            Text("Anagram Remote").font(.title2.bold()).lineLimit(1).minimumScaleFactor(0.7)
             Button { showConnection = true } label: {
                 HStack(spacing: 10) {
-                    Circle().fill(p.connectionLevel.color).frame(width: 14, height: 14)
-                    VStack(alignment: .leading, spacing: 2) {
+                    Image(systemName: p.connectionLevel.symbol)
+                        .font(.title3)
+                        .foregroundStyle(p.connectionLevel.color)
+                    VStack(alignment: .leading, spacing: 0) {
                         Text(p.connectionLabel).font(.headline).lineLimit(1)
                         Text(p.destinationLabel).font(.caption).foregroundStyle(Theme.textSecondary).lineLimit(1)
                     }
@@ -44,29 +45,36 @@ struct PerformanceView: View {
             .accessibilityLabel("MIDI connection: \(p.connectionLabel), \(p.destinationLabel). Opens connection settings.")
             .accessibilityIdentifier("connection-pill")
             Spacer(minLength: 0)
-            NavChip(title: "Presets", systemImage: "list.bullet")
-            NavChip(title: "Tuner", systemImage: "tuningfork")
-            NavChip(title: "Edit", systemImage: "slider.horizontal.3")
-            NavChip(title: "Connection", systemImage: "gearshape") { showConnection = true }
+            Text("ANAGRAM REMOTE")
+                .font(.caption.bold()).tracking(1.5)
+                .foregroundStyle(Theme.textSecondary)
+                .lineLimit(1).minimumScaleFactor(0.7)
+                .accessibilityAddTraits(.isHeader)
+            ConnectionSettingsButton { showConnection = true }
         }
     }
 
+    /// Compact single-row strip: preset identity on the left, the two working M1 shortcuts on the right.
     private func presetBar(_ p: PerformancePresentation) -> some View {
         HStack(spacing: Theme.Spacing.gutter) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("PRESET").font(.caption.bold()).foregroundStyle(Theme.textSecondary)
-                Text(p.preset.label)
-                    .font(.system(size: 48, weight: .heavy).monospacedDigit())
-                    .accessibilityIdentifier("preset-readout")
-                Text(p.preset.subtitle).font(.caption).foregroundStyle(Theme.textSecondary)
-            }
+            Text("PRESET").font(.caption.bold()).tracking(1).foregroundStyle(Theme.textSecondary)
+            Text(p.preset.label)
+                .font(.system(size: 44, weight: .heavy, design: .rounded).monospacedDigit())
+                .lineLimit(1).minimumScaleFactor(0.6)
+                .accessibilityLabel("Preset \(p.preset.label). \(p.preset.subtitle)")
+                .accessibilityIdentifier("preset-readout")
+            Text(p.preset.subtitle)
+                .font(.footnote).foregroundStyle(Theme.textSecondary)
+                .lineLimit(2).minimumScaleFactor(0.8)
+                .accessibilityHidden(true)
             Spacer(minLength: 0)
             ForEach(PresetShortcut.all) { shortcut in
                 PresetShortcutButton(shortcut: shortcut, enabled: p.canSend) { vm.sendPreset(shortcut.program) }
             }
         }
-        .padding(Theme.Spacing.gutter)
-        .frame(minHeight: 88)
+        .padding(.horizontal, Theme.Spacing.gutter)
+        .padding(.vertical, 8)
+        .frame(minHeight: Theme.minTouch + 16)
         .themedCard()
         .fixedSize(horizontal: false, vertical: true)
     }
@@ -75,7 +83,7 @@ struct PerformanceView: View {
         VStack(spacing: Theme.Spacing.gutter) {
             ForEach(SceneSlotPresentation.all) { SceneButton(slot: $0) }
         }
-        .frame(minWidth: 160, idealWidth: 200, maxWidth: 220)
+        .frame(minWidth: 150, idealWidth: 190, maxWidth: 210)
     }
 
     private var stompGrid: some View {
@@ -95,11 +103,12 @@ struct PerformanceView: View {
             Text(p.lastSentText ?? "No MIDI sent this session")
                 .font(.system(.footnote, design: .monospaced)).foregroundStyle(Theme.textSecondary)
             if let e = p.errorText {
-                Text("Error: \(e)").font(.footnote.bold()).foregroundStyle(Theme.error)
+                Label("Error: \(e)", systemImage: "exclamationmark.triangle.fill")
+                    .font(.footnote.bold()).foregroundStyle(Theme.error)
             }
         }
         .lineLimit(2)
-        .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 24, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("status-strip")
     }
